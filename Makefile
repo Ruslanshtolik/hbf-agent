@@ -111,6 +111,29 @@ docker-run:
 		-v /etc/hbf-agent:/etc/hbf-agent \
 		$(BINARY_NAME):$(VERSION)
 
+## git-push: Quick commit and push to GitHub (usage: make git-push MSG="your message")
+git-push:
+	@if [ -z "$(MSG)" ]; then \
+		echo "Error: Please provide a commit message using MSG=\"your message\""; \
+		exit 1; \
+	fi
+	@echo "Adding all changes..."
+	@git add .
+	@echo "Committing with message: $(MSG)"
+	@git commit -m "$(MSG)" || echo "No changes to commit"
+	@echo "Pushing to GitHub..."
+	@git push origin main
+	@echo "✓ Successfully pushed to GitHub!"
+
+## git-status: Show git status
+git-status:
+	@git status
+
+## git-pull: Pull latest changes from GitHub
+git-pull:
+	@echo "Pulling latest changes..."
+	@git pull origin main
+
 ## help: Show this help message
 help:
 	@echo "Usage: make [target]"
