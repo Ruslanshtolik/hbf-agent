@@ -1,0 +1,27 @@
+{
+  "go.formatTool": "gofmt",
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "workspace",
+  "go.vetOnSave": "workspace",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "files.exclude": {
+    "**/.git": false,
+    "**/build": true,
+    "**/*.exe": true,
+    "**/coverage.out": true,
+    "**/coverage.html": true
+  },
+  "go.testFlags": ["-v", "-race"],
+  "go.coverOnSave": false,
+  "go.toolsManagement.autoUpdate": true
+}

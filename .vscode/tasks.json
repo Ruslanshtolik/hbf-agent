@@ -1,0 +1,82 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "make build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "make test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Run Dev",
+      "type": "shell",
+      "command": "make run-dev",
+      "problemMatcher": ["$go"],
+      "isBackground": true
+    },
+    {
+      "label": "Git Push",
+      "type": "shell",
+      "command": "make git-push MSG=\"${input:commitMessage}\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git Status",
+      "type": "shell",
+      "command": "make git-status",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git Pull",
+      "type": "shell",
+      "command": "make git-pull",
+      "problemMatcher": []
+    },
+    {
+      "label": "Format Code",
+      "type": "shell",
+      "command": "make fmt",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint",
+      "type": "shell",
+      "command": "make lint",
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "make clean",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker Build",
+      "type": "shell",
+      "command": "make docker-build",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "commitMessage",
+      "type": "promptString",
+      "description": "Enter commit message",
+      "default": "Update: changes"
+    }
+  ]
+}

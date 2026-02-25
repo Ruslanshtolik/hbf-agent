@@ -22,7 +22,7 @@ go.work
 
 # IDE
 .idea/
-.vscode/
+# .vscode/ - Keeping VSCode settings for team consistency
 *.swp
 *.swo
 *~
