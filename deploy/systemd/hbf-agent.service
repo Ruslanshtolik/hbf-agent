@@ -1,0 +1,43 @@
+[Unit]
+Description=HBF Agent - Host-Based Firewall with Service Mesh
+Documentation=https://github.com/yourusername/hbf-agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# Environment
+Environment="HBF_CONFIG=/etc/hbf-agent/config.yaml"
+
+# Start the agent
+ExecStart=/usr/local/bin/hbf-agent --config ${HBF_CONFIG}
+
+# Restart policy
+Restart=on-failure
+RestartSec=5s
+
+# Security settings
+NoNewPrivileges=false
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/log/hbf-agent
+
+# Capabilities required for firewall management
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hbf-agent
+
+[Install]
+WantedBy=multi-user.target

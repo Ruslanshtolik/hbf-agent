@@ -1,0 +1,266 @@
+version: '3.8'
+
+networks:
+  management:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+  
+  application:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.0.0/24
+  
+  database:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.2.0.0/24
+  
+  external:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.3.0.0/24
+
+services:
+  # Management Services
+  consul:
+    image: consul:latest
+    container_name: consul
+    hostname: consul
+    networks:
+      management:
+        ipv4_address: 10.0.0.10
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0
+    volumes:
+      - consul-data:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus
+    networks:
+      management:
+        ipv4_address: 10.0.0.11
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    networks:
+      management:
+        ipv4_address: 10.0.0.12
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+  # Application Nodes
+  hbf-node-1:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: hbf-node-1
+    hostname: hbf-node-1
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      application:
+        ipv4_address: 10.1.0.101
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+      - "8080:8080"
+    volumes:
+      - ./configs/hbf-node-1.yaml:/etc/hbf-agent/config.yaml
+    environment:
+      - NODE_ID=hbf-node-1
+      - CONSUL_ADDR=10.0.0.10:8500
+
+  hbf-node-2:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: hbf-node-2
+    hostname: hbf-node-2
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      application:
+        ipv4_address: 10.1.0.102
+    ports:
+      - "9190:9090"
+      - "9191:9091"
+      - "8180:8080"
+    volumes:
+      - ./configs/hbf-node-2.yaml:/etc/hbf-agent/config.yaml
+    environment:
+      - NODE_ID=hbf-node-2
+      - CONSUL_ADDR=10.0.0.10:8500
+
+  hbf-node-3:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: hbf-node-3
+    hostname: hbf-node-3
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      application:
+        ipv4_address: 10.1.0.103
+    ports:
+      - "9290:9090"
+      - "9291:9091"
+      - "8280:8080"
+    volumes:
+      - ./configs/hbf-node-3.yaml:/etc/hbf-agent/config.yaml
+    environment:
+      - NODE_ID=hbf-node-3
+      - CONSUL_ADDR=10.0.0.10:8500
+
+  # Database Nodes
+  db-node-1:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: db-node-1
+    hostname: db-node-1
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      database:
+        ipv4_address: 10.2.0.201
+    ports:
+      - "9390:9090"
+      - "9391:9091"
+      - "5432:5432"
+    volumes:
+      - ./configs/db-node-1.yaml:/etc/hbf-agent/config.yaml
+      - db-1-data:/var/lib/postgresql/data
+    environment:
+      - NODE_ID=db-node-1
+      - CONSUL_ADDR=10.0.0.10:8500
+      - POSTGRES_PASSWORD=postgres
+
+  db-node-2:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: db-node-2
+    hostname: db-node-2
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      database:
+        ipv4_address: 10.2.0.202
+    ports:
+      - "9490:9090"
+      - "9491:9091"
+      - "5532:5432"
+    volumes:
+      - ./configs/db-node-2.yaml:/etc/hbf-agent/config.yaml
+      - db-2-data:/var/lib/postgresql/data
+    environment:
+      - NODE_ID=db-node-2
+      - CONSUL_ADDR=10.0.0.10:8500
+      - POSTGRES_PASSWORD=postgres
+
+  db-node-3:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: db-node-3
+    hostname: db-node-3
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      management:
+      database:
+        ipv4_address: 10.2.0.203
+    ports:
+      - "9590:9090"
+      - "9591:9091"
+      - "5632:5432"
+    volumes:
+      - ./configs/db-node-3.yaml:/etc/hbf-agent/config.yaml
+      - db-3-data:/var/lib/postgresql/data
+    environment:
+      - NODE_ID=db-node-3
+      - CONSUL_ADDR=10.0.0.10:8500
+      - POSTGRES_PASSWORD=postgres
+
+  # Load Balancer
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    hostname: haproxy
+    networks:
+      external:
+        ipv4_address: 10.3.0.100
+      application:
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8404:8404"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+
+  # Test Client
+  test-client:
+    image: alpine:latest
+    container_name: test-client
+    hostname: test-client
+    networks:
+      - external
+      - application
+      - database
+    command: sleep infinity
+    volumes:
+      - ./scripts:/scripts
+
+volumes:
+  consul-data:
+  prometheus-data:
+  grafana-data:
+  db-1-data:
+  db-2-data:
+  db-3-data:

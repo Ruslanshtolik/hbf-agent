@@ -1,0 +1,180 @@
+# HBF Agent Configuration Example
+
+# Agent configuration
+agent:
+  # Unique identifier for this agent node
+  node_id: "node-01"
+  
+  # Datacenter identifier
+  datacenter: "dc1"
+  
+  # Region identifier
+  region: "us-east-1"
+  
+  # Bind address for the agent
+  bind_addr: "0.0.0.0"
+  
+  # API server port
+  api_port: 9090
+
+# Firewall configuration
+firewall:
+  # Backend: iptables or nftables
+  backend: "iptables"
+  
+  # Default policy: allow or deny
+  default_policy: "deny"
+  
+  # Enable IPv6 support
+  enable_ipv6: true
+  
+  # Sync interval for rule synchronization
+  sync_interval: "30s"
+  
+  # Initial firewall rules
+  rules:
+    # Allow SSH
+    - chain: "INPUT"
+      protocol: "tcp"
+      dport: "22"
+      action: "ACCEPT"
+      comment: "Allow SSH"
+    
+    # Allow HTTP
+    - chain: "INPUT"
+      protocol: "tcp"
+      dport: "80"
+      action: "ACCEPT"
+      comment: "Allow HTTP"
+    
+    # Allow HTTPS
+    - chain: "INPUT"
+      protocol: "tcp"
+      dport: "443"
+      action: "ACCEPT"
+      comment: "Allow HTTPS"
+    
+    # Allow established connections
+    - chain: "INPUT"
+      action: "ACCEPT"
+      comment: "Allow established connections"
+    
+    # Allow loopback
+    - chain: "INPUT"
+      source: "127.0.0.1"
+      action: "ACCEPT"
+      comment: "Allow loopback"
+
+# Service mesh configuration
+service_mesh:
+  # Enable service mesh functionality
+  enabled: true
+  
+  # Bind address for service mesh proxy
+  bind_address: "0.0.0.0"
+  
+  # Proxy port
+  proxy_port: 8080
+  
+  # Admin port
+  admin_port: 8081
+  
+  # Service discovery configuration
+  discovery:
+    # Backend: consul, etcd, dns, static
+    backend: "consul"
+    
+    # Discovery backend address
+    address: "localhost:8500"
+    
+    # Connection timeout
+    timeout: "5s"
+    
+    # Discovery sync interval
+    interval: "10s"
+  
+  # Load balancing configuration
+  load_balance:
+    # Strategy: round_robin, least_conn, random, weighted
+    strategy: "round_robin"
+  
+  # Circuit breaker configuration
+  circuit_breaker:
+    # Enable circuit breaker
+    enabled: true
+    
+    # Failure threshold before opening circuit
+    threshold: 5
+    
+    # Timeout before attempting to close circuit
+    timeout: "30s"
+    
+    # Number of requests to allow in half-open state
+    half_open_requests: 3
+
+# Security configuration
+security:
+  # mTLS configuration
+  mtls:
+    # Enable mTLS
+    enabled: false
+    
+    # Certificate file path
+    cert_file: "/etc/hbf-agent/certs/agent.crt"
+    
+    # Private key file path
+    key_file: "/etc/hbf-agent/certs/agent.key"
+    
+    # CA certificate file path
+    ca_file: "/etc/hbf-agent/certs/ca.crt"
+  
+  # Authentication configuration
+  auth:
+    # Enable authentication
+    enabled: false
+    
+    # Auth type: token, jwt, mtls
+    type: "token"
+    
+    # API tokens (for token auth)
+    tokens:
+      - "your-secret-token-here"
+  
+  # Rate limiting configuration
+  rate_limit:
+    # Enable rate limiting
+    enabled: true
+    
+    # Requests per second
+    rps: 1000
+    
+    # Burst size
+    burst: 2000
+
+# Monitoring configuration
+monitoring:
+  # Enable monitoring
+  enabled: true
+  
+  # Metrics server port
+  metrics_port: 9091
+  
+  # Metrics endpoint path
+  metrics_path: "/metrics"
+  
+  # Health check server port
+  health_port: 9092
+  
+  # Health check endpoint path
+  health_path: "/health"
+
+# Logging configuration
+log:
+  # Log level: debug, info, warn, error
+  level: "info"
+  
+  # Log format: text, json
+  format: "text"
+  
+  # Log output: stdout, stderr, file path
+  output: "stdout"

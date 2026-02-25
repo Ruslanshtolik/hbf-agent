@@ -1,0 +1,50 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+hbf-agent
+build/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Configuration (keep examples)
+config/config.yaml
+*.local.yaml
+
+# Logs
+*.log
+logs/
+
+# Certificates
+*.pem
+*.key
+*.crt
+certs/
+
+# Temporary files
+tmp/
+temp/
